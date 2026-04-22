@@ -1,0 +1,112 @@
+# =============================================================================
+# NON-ESSENTIAL FILES FOR mani_capture.launch.py AND mani_postprocess.launch.py
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# ML Training Scripts (not used by capture or post-processing pipelines)
+# -----------------------------------------------------------------------------
+snapshot/2d\ model/2dtraining.py
+snapshot/2d\ model/2dtesting.py
+snapshot/2d\ model/2dtrain_resume.py
+snapshot/3d\ model/3dtrain.py
+snapshot/3d\ model/3dtrain\&render.py
+snapshot/3d\ model/3dreder_only.py
+snapshot/3d\ model/dualtrain.py
+snapshot/3d\ model/dualtrain\&resume.py
+snapshot/3d\ model/test.py
+snapshot/3d\ model/test_multisession.py
+
+# -----------------------------------------------------------------------------
+# Jupyter Notebooks (development/research artifacts)
+# -----------------------------------------------------------------------------
+# snapshot/3d\ model/*.ipynb
+snapshot/3d\ model/dualtrain_multisession*.ipynb
+snapshot/3d\ model/dualtrain_resume_full.ipynb
+# snapshot/3d\ model/residue_cluster_filter.ipynb
+
+# -----------------------------------------------------------------------------
+# ML Checkpoints (generated artifacts - retrainable)
+# -----------------------------------------------------------------------------
+snapshot/2d\ model/checkpoints2d/
+snapshot/3d\ model/checkpoints/
+snapshot/3d\ model/checkpoints_multisession/
+snapshot/3d\ model/checkpoints_multisession_640x480_manual/
+snapshot/checkpoints1/
+
+# -----------------------------------------------------------------------------
+# Preview/Debug Images (generated outputs)
+# -----------------------------------------------------------------------------
+snapshot/3d\ model/previews/
+snapshot/preview_NN/
+snapshot/previews/
+snapshot/debug_mesh_render_only/
+
+# -----------------------------------------------------------------------------
+# Debug Tools (not used in production pipelines)
+# -----------------------------------------------------------------------------
+snapshot/debug_tools/
+snapshot/move_test.py
+snapshot/camera_ui.py
+
+# -----------------------------------------------------------------------------
+# Other Capture Node Variants (not used by main pipelines)
+# -----------------------------------------------------------------------------
+snapshot/j6_trigger_capture.py
+snapshot/j6_trigger_capture_fk.py
+snapshot/j6_trigger_rgbd_fk_all.py
+
+# -----------------------------------------------------------------------------
+# Render Mesh (PyRender synthetic rendering - NOT used by capture pipeline)
+# The capture node does its own FK via URDFChainFK class inline.
+# This folder is for ML ground-truth depth rendering only.
+# -----------------------------------------------------------------------------
+snapshot/render_mesh/
+
+# -----------------------------------------------------------------------------
+# Log Files (runtime generated)
+# -----------------------------------------------------------------------------
+Log/
+**/*.log.txt
+
+# -----------------------------------------------------------------------------
+# Generated TF Tree Diagrams
+# -----------------------------------------------------------------------------
+frames_*.gv
+frames_*.pdf
+
+# -----------------------------------------------------------------------------
+# Model Weights (should be downloaded, not committed)
+# -----------------------------------------------------------------------------
+*.pt
+
+# -----------------------------------------------------------------------------
+# AI Assistant Configs (user-specific)
+# -----------------------------------------------------------------------------
+CLAUDE.md
+.claude/
+
+# -----------------------------------------------------------------------------
+# Python Cache & Build Artifacts
+# -----------------------------------------------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+build/
+install/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# -----------------------------------------------------------------------------
+# IDE & Editor Files
+# -----------------------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
