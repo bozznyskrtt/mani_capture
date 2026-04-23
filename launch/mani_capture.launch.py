@@ -36,10 +36,10 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    # ── Launch arguments ────────────────────────────────────────────────────────
+    # Launch arguments
     outdir_arg = DeclareLaunchArgument(
         'outdir',
-        default_value='/home/bozznyskrtt/pcl_ws/teddybear',
+        default_value='/home/robot/pcl_ws/teddybear',
         description='Root directory where session folders are saved',
     )
     threshold_deg_arg = DeclareLaunchArgument(
@@ -75,7 +75,7 @@ def generate_launch_description():
         }.items(),
     )
 
-    # ── Step 2: hebi_bringup move_group (t=3 s) ────────────────────────────────
+    # Step 2: hebi_bringup move_group (t=3 s)
     hebi_bringup_move_group = TimerAction(
         period=3.0,
         actions=[
@@ -91,14 +91,14 @@ def generate_launch_description():
         ],
     )
 
-    # ── Step 3: Orbbec camera (t=0 s) ──────────────────────────────────────────
+    # Step 3: Orbbec camera (t=0 s) 
     camera_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(orbbec_dir, 'launch', 'astra_stereo_u3.launch.py')
         ),
     )
 
-    # ── Step 4: Static TF base_link -> camera_link (t=0 s) ────────────────────
+    # Step 4: Static TF base_link -> camera_link (t=0 s) 
     static_tf = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
@@ -106,7 +106,7 @@ def generate_launch_description():
         arguments=['0.05', '0.06', '-0.065', '0', '0', '0', 'base_link', 'camera_link'],
     )
 
-    # ── Step 5: YOLO object detection + TF (t=5 s) ────────────────────────────
+    # Step 5: YOLO object detection + TF (t=5 s) 
     yolo_node = TimerAction(
         period=5.0,
         actions=[
@@ -118,7 +118,7 @@ def generate_launch_description():
         ],
     )
 
-    # ── Step 6: hebi_a-2085-06g_moveit_config move_group (t=5 s) ──────────────
+    # Step 6: hebi_a-2085-06g_moveit_config move_group (t=5 s) 
     hebi_moveit_move_group = TimerAction(
         period=5.0,
         actions=[
@@ -130,7 +130,7 @@ def generate_launch_description():
         ],
     )
 
-    # ── Step 7: hebi_control movers (t=15 s) ───────────────────────────────────
+    # Step 7: hebi_control movers (t=15 s)
     # hebi_a-2085-06g move_group starts at t=5 s and takes ~5-8 s to initialise.
     # t=15 s gives it a comfortable margin before hebi_movers tries to connect.
     hebi_movers = TimerAction(
@@ -144,7 +144,7 @@ def generate_launch_description():
         ],
     )
 
-    # ── Step 8: Snapshot RGBD capture node (t=18 s) ───────────────────────────
+    # Step 8: Snapshot RGBD capture node (t=18 s) 
     # Starts 3 s after hebi_movers so the movers are already sending commands.
     snapshot_node = TimerAction(
         period=18.0,
@@ -167,7 +167,7 @@ def generate_launch_description():
                     'base_frame': 'base_link',
                     'ee_frame': 'end_effector_1',
                     'xacro_path': (
-                        '/home/bozznyskrtt/hebi_ws/src/hebi_description'
+                        '/home/robot/hebi_ws/src/hebi_description'
                         '/urdf/kits/A-2085-06G.urdf.xacro'
                     ),
                     'sync_slop_sec': 0.03,

@@ -30,7 +30,7 @@ from launch.substitutions import LaunchConfiguration
 
 
 # Absolute paths to the post-processing scripts (source tree locations)
-_SNAPSHOT_SRC = '/home/bozznyskrtt/hebi_ws/src/snapshot/snapshot'
+_SNAPSHOT_SRC = '/home/robot/hebi_ws/src/snapshot/snapshot'
 _SCRIPT_DIR = os.path.join(_SNAPSHOT_SRC, '3d model')
 _TSDF_SCRIPT = os.path.join(_SNAPSHOT_SRC, 'tsdf_fuse_from_npy_crop.py')
 
@@ -118,7 +118,7 @@ def _create_pipeline(context, *args, **kwargs):
 def generate_launch_description():
     outdir_arg = DeclareLaunchArgument(
         'outdir',
-        default_value='/home/bozznyskrtt/pcl_ws/teddybear',
+        default_value='/home/robot/pcl_ws/teddybear',
         description='Root directory where session_* folders live',
     )
     session_path_arg = DeclareLaunchArgument(
