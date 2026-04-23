@@ -55,12 +55,12 @@ There're 2 main commands you'll be using.
 1) this command makes Mani move and capture depth image.
 
 ```bash
-ros2 launch snaphot mani_capture.launch.py
+ros2 launch snapshot mani_capture.launch.py
 ``` 
 2) This command does all the segmentation, prediction, subtraction,clustering, data cleaning and then reconstruct the 3d shapes using TSDF algorithm.
 
 ```bash
-ros2 launch snaphot mani_postprocess.launch.py
+ros2 launch snapshot mani_postprocess.launch.py
 ```
 
 ## ⚙️ Configuration
@@ -79,7 +79,7 @@ change the xacro_path to your robot .urdf.xacro file path.
 
 2) /launch/mani_postprocess.launch.py
 ![png](/media/postprocess1.png)
-Change the absolite path for your this cloned repository.
+Change the absolute path for your this cloned repository.
 
 ![png](/media/postprocess2.png)
 Change to your depth image saved path.
