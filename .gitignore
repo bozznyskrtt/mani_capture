@@ -15,12 +15,13 @@ snapshot/3d\ model/dualtrain.py
 snapshot/3d\ model/dualtrain\&resume.py
 snapshot/3d\ model/test.py
 snapshot/3d\ model/test_multisession.py
+snapshot/3d\ model/dataset/
 
 # -----------------------------------------------------------------------------
 # Jupyter Notebooks (development/research artifacts)
 # -----------------------------------------------------------------------------
 # snapshot/3d\ model/*.ipynb
-snapshot/3d\ model/dualtrain_multisession*.ipynb
+snapshot/3d\ model/dualtrain_multisession.ipynb
 snapshot/3d\ model/dualtrain_resume_full.ipynb
 # snapshot/3d\ model/residue_cluster_filter.ipynb
 

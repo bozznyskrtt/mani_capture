@@ -44,7 +44,7 @@ def generate_launch_description():
     )
     threshold_deg_arg = DeclareLaunchArgument(
         'threshold_deg',
-        default_value='3.0',
+        default_value='30.0',
         description='Joint angle change (degrees) that triggers a capture',
     )
     idle_flush_sec_arg = DeclareLaunchArgument(
