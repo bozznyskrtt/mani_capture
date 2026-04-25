@@ -5,63 +5,63 @@
 # -----------------------------------------------------------------------------
 # ML Training Scripts (not used by capture or post-processing pipelines)
 # -----------------------------------------------------------------------------
-snapshot/2d\ model/2dtraining.py
-snapshot/2d\ model/2dtesting.py
-snapshot/2d\ model/2dtrain_resume.py
-snapshot/3d\ model/3dtrain.py
-snapshot/3d\ model/3dtrain\&render.py
-snapshot/3d\ model/3dreder_only.py
-snapshot/3d\ model/dualtrain.py
-snapshot/3d\ model/dualtrain\&resume.py
-snapshot/3d\ model/test.py
-snapshot/3d\ model/test_multisession.py
-snapshot/3d\ model/dataset/
+mani_capture/2d\ model/2dtraining.py
+mani_capture/2d\ model/2dtesting.py
+mani_capture/2d\ model/2dtrain_resume.py
+mani_capture/3d\ model/3dtrain.py
+mani_capture/3d\ model/3dtrain\&render.py
+mani_capture/3d\ model/3dreder_only.py
+mani_capture/3d\ model/dualtrain.py
+mani_capture/3d\ model/dualtrain\&resume.py
+mani_capture/3d\ model/test.py
+mani_capture/3d\ model/test_multisession.py
+mani_capture/3d\ model/dataset/
 
 # -----------------------------------------------------------------------------
 # Jupyter Notebooks (development/research artifacts)
 # -----------------------------------------------------------------------------
-# snapshot/3d\ model/*.ipynb
-snapshot/3d\ model/dualtrain_multisession.ipynb
-snapshot/3d\ model/dualtrain_resume_full.ipynb
-# snapshot/3d\ model/residue_cluster_filter.ipynb
+# mani_capture/3d\ model/*.ipynb
+mani_capture/3d\ model/dualtrain_multisession.ipynb
+mani_capture/3d\ model/dualtrain_resume_full.ipynb
+# mani_capture/3d\ model/residue_cluster_filter.ipynb
 
 # -----------------------------------------------------------------------------
 # ML Checkpoints (generated artifacts - retrainable)
 # -----------------------------------------------------------------------------
-snapshot/2d\ model/checkpoints2d/
-snapshot/3d\ model/checkpoints/
-snapshot/3d\ model/checkpoints_multisession/
-snapshot/3d\ model/checkpoints_multisession_640x480_manual/
-snapshot/checkpoints1/
+mani_capture/2d\ model/checkpoints2d/
+mani_capture/3d\ model/checkpoints/
+mani_capture/3d\ model/checkpoints_multisession/
+mani_capture/3d\ model/checkpoints_multisession_640x480_manual/
+mani_capture/checkpoints1/
 
 # -----------------------------------------------------------------------------
 # Preview/Debug Images (generated outputs)
 # -----------------------------------------------------------------------------
-snapshot/3d\ model/previews/
-snapshot/preview_NN/
-snapshot/previews/
-snapshot/debug_mesh_render_only/
+mani_capture/3d\ model/previews/
+mani_capture/preview_NN/
+mani_capture/previews/
+mani_capture/debug_mesh_render_only/
 
 # -----------------------------------------------------------------------------
 # Debug Tools (not used in production pipelines)
 # -----------------------------------------------------------------------------
-snapshot/debug_tools/
-snapshot/move_test.py
-snapshot/camera_ui.py
+mani_capture/debug_tools/
+mani_capture/move_test.py
+mani_capture/camera_ui.py
 
 # -----------------------------------------------------------------------------
 # Other Capture Node Variants (not used by main pipelines)
 # -----------------------------------------------------------------------------
-snapshot/j6_trigger_capture.py
-snapshot/j6_trigger_capture_fk.py
-snapshot/j6_trigger_rgbd_fk_all.py
+mani_capture/j6_trigger_capture.py
+mani_capture/j6_trigger_capture_fk.py
+mani_capture/j6_trigger_rgbd_fk_all.py
 
 # -----------------------------------------------------------------------------
 # Render Mesh (PyRender synthetic rendering - NOT used by capture pipeline)
 # The capture node does its own FK via URDFChainFK class inline.
 # This folder is for ML ground-truth depth rendering only.
 # -----------------------------------------------------------------------------
-snapshot/render_mesh/
+mani_capture/render_mesh/
 
 # -----------------------------------------------------------------------------
 # Log Files (runtime generated)

@@ -25,7 +25,7 @@ Run the following command to set up and Download the package.
 cd ~/hebi_ws/src
 
 #Install the package
-git clone https://github.com/bozznyskrtt/Mani_capture.git
+git clone https://github.com/bozznyskrtt/mani_capture.git
 
 #if meshlab is not installed run this
 sudo apt install meshlab
@@ -55,12 +55,12 @@ There're 2 main commands you'll be using.
 1) this command makes Mani move and capture depth image.
 
 ```bash
-ros2 launch snapshot mani_capture.launch.py
+ros2 launch mani_capture mani_capture.launch.py
 ``` 
 2) This command does all the segmentation, prediction, subtraction,clustering, data cleaning and then reconstruct the 3d shapes using TSDF algorithm.
 
 ```bash
-ros2 launch snapshot mani_postprocess.launch.py
+ros2 launch mani_capture mani_postprocess.launch.py
 ```
 
 ## ⚙️ Configuration
@@ -68,20 +68,20 @@ ros2 launch snapshot mani_postprocess.launch.py
 There might be a different between my workspace and yours, I'll show where to edit.
 
 1) /launch/mani_capture.launch.py
-![png](/media/capture1.png)
+![png](/media/capture1.png)\
 Change out_arg default value to your file savin directory.
 
-![png](/media/capture2.png)
+![png](/media/capture2.png)\
 Adjust x y z value if your camera position is different.
 
-![png](/media/capture3.png)
+![png](/media/capture3.png)\
 change the xacro_path to your robot .urdf.xacro file path.
 
 2) /launch/mani_postprocess.launch.py
-![png](/media/postprocess1.png)
+![png](/media/postprocess1.png)\
 Change the absolute path for your this cloned repository.
 
-![png](/media/postprocess2.png)
+![png](/media/postprocess2.png)\
 Change to your depth image saved path.
 
 
