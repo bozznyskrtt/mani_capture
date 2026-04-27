@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'snapshot'
+package_name = 'mani_capture'
 
 setup(
     name=package_name,
