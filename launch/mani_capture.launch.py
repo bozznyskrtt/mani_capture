@@ -21,7 +21,6 @@ Launch args:
 """
 
 import os
-from pathlib import Path
 
 from ament_index_python.packages import get_package_share_directory
 
@@ -40,7 +39,7 @@ def generate_launch_description():
     # Launch arguments
     outdir_arg = DeclareLaunchArgument(
         'outdir',
-        default_value=str(Path.home() / "pcl_ws" / "teddybear"),
+        default_value=os.path.expandvars("$HOME/pcl_ws/teddybear"),
         description='Root directory where session folders are saved',
     )
     threshold_deg_arg = DeclareLaunchArgument(
