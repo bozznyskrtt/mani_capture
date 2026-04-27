@@ -13,7 +13,8 @@ import scipy.sparse.csgraph as csgraph
 
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
-DEFAULT_SESSION_ROOT = "/home/bozznyskrtt/pcl_ws/teddybear/session17"
+#DEFAULT_SESSION_ROOT = "/home/bozznyskrtt/pcl_ws/teddybear/session17"
+os.path.expandvars("$HOME/pcl_ws/teddybear/session17")
 SESSION_ROOT = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_SESSION_ROOT
 INPUT_DIR      = os.path.join(SESSION_ROOT, "test_outputs_mask_depth_refined_640x480", "subtracted_depth_raw")
 GT_MASK_DIR    = os.path.join(SESSION_ROOT, "test_outputs_mask_depth_refined_640x480", "gt_masks")
