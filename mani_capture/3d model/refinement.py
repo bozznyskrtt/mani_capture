@@ -22,11 +22,12 @@ import sys
 # =========================
 # User settings
 # =========================
-DEFAULT_ROOT = "/home/bozznyskrtt/pcl_ws/teddybear/session17"
+#DEFAULT_ROOT = "/home/bozznyskrtt/pcl_ws/teddybear/session17"
+DEFAULT_ROOT = os.path.expandvars("$HOME/pcl_ws/teddybear/session17")
 ROOT = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_ROOT
 DATASET_ROOT = ROOT + "/crop"
 META_PATH = os.path.join(ROOT, "meta.txt")
-CHECKPOINT_PATH = "/home/bozznyskrtt/hebi_ws/src/snapshot/snapshot/3d model/checkpoints_multisession_640x480/best_multisession_640x480.pth"
+CHECKPOINT_PATH = os.path.expandvars("$HOME/hebi_ws/src/snapshot/snapshot/3d model/checkpoints_multisession_640x480/best_multisession_640x480.pth")
 
 OUTPUT_DIR = ROOT + "/test_outputs_mask_depth_refined_640x480"
 
