@@ -150,9 +150,9 @@ def generate_launch_description():
         period=18.0,
         actions=[
             Node(
-                package='snapshot',
+                package='mani_capture',
                 executable='j6_trigger_capture_node_rgbd_fk',
-                name='snapshot_capture',
+                name='mani_capture',
                 parameters=[{
                     'joint_name': 'J6_wrist3',
                     'threshold_deg': threshold_deg,
