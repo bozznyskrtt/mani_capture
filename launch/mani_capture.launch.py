@@ -114,6 +114,10 @@ def generate_launch_description():
                 package='yolo_ros2',
                 executable='object_detection_tf_node',
                 name='object_detection_tf_node',
+                parameters=[{
+                    #'target_name': 'J6_wrist3',
+                    'model_path': '~/camera_data/datasets_2/runs/detect/train/weights/best.pt',    
+                }],
             )
         ],
     )
