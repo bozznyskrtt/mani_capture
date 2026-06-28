@@ -128,7 +128,7 @@ def generate_launch_description():
     yolo_ros_included_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(yolo_bringup_launch_path),
         launch_arguments={
-            'model': "/home/robot/camera_data/datasets_2/runs/detect/train/weights/best.pt",
+            'model': "yolo26s.pt",
             'use_3d': "True",
             'device': "cuda:0",
         }.items()
