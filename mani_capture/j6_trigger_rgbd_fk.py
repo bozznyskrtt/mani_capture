@@ -661,6 +661,9 @@ ros2 run snapshot j6_trigger_capture_node_rgbd_fk --ros-args \
   -p save_camera_info:=true \
   -p depth_is_aligned_to_rgb:=false
 
+nuc_version  
+ros2 run mani_capture j6_trigger_capture_node_rgbd_fk --ros-args -p joint_name:=J6_wrist3 -p threshold_deg:=3.0 -p outdir:=/home/robot/pcl_ws/teddybear -p idle_flush_sec:=10.0 -p rgb_topic:=/camera/color/image_raw -p depth_topic:=/camera/depth/image_raw -p rgb_camera_info_topic:=/camera/color/camera_info -p depth_camera_info_topic:=/camera/depth/camera_info -p joint_states_topic:=/joint_states -p camera_frame:=camera_depth_optical_frame -p base_frame:=base_link -p ee_frame:=end_effector_1 -p xacro_path:=/home/robot/hebi_ws/src/hebi_description/urdf/kits/A-2085-06G.urdf.xacro -p sync_slop_sec:=0.03 -p sync_queue_size:=50 -p save_rgb:=true -p save_depth:=true -p save_rgbd_npy:=true -p save_camera_info:=true -p depth_is_aligned_to_rgb:=false
+
 If your driver later provides aligned depth, use for example:
   -p depth_topic:=/camera/aligned_depth_to_color/image_raw
   -p depth_is_aligned_to_rgb:=true

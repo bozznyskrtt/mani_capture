@@ -115,8 +115,8 @@ def generate_launch_description():
                 executable='object_detection_tf_node',
                 name='object_detection_tf_node',
                 parameters=[{
-                    #'target_name': 'J6_wrist3',
-                    'model_path': '~/camera_data/datasets_2/runs/detect/train/weights/best.pt',    
+                    # 'target_name': 'J6_wrist3',
+                    # 'model_path': '~/camera_data/datasets_2/runs/detect/train/weights/best.pt',    
                 }],
             )
         ],
@@ -134,7 +134,7 @@ def generate_launch_description():
         ],
     )
 
-    # Step 7: hebi_control movers (t=15 s)
+    # Step 7: hebi_control moverhebi_arm_mover1s (t=15 s)
     # hebi_a-2085-06g move_group starts at t=5 s and takes ~5-8 s to initialise.
     # t=15 s gives it a comfortable margin before hebi_movers tries to connect.
     hebi_movers = TimerAction(
@@ -142,7 +142,7 @@ def generate_launch_description():
         actions=[
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
-                    os.path.join(hebi_control_dir, 'launch', 'hebi_movers.launch.py')
+                    os.path.join(hebi_control_dir, 'launch', 'hebi_moversK.launch.py')
                 ),
             )
         ],
