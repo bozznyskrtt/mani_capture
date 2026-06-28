@@ -143,11 +143,24 @@ def generate_launch_description():
             ]
     )
 
+    rviz_config_dir = os.path.join(
+        get_package_share_directory('mani_capture'),
+        'rviz', 'mani.rviz'
+    )
+    rviz_node = Node(
+            package='rviz2', 
+            executable='rviz2',
+            name='rviz2',
+            arguments=['-d', rviz_config_dir],
+            output='screen',
+    )
+
     yolo_launch = TimerAction(
     period=5.0,
     actions=[
         yolo_ros_included_launch,
         rqt_color_rqt_node,
+        rviz_node,
     ],
 )
 
