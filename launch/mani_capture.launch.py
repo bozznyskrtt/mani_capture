@@ -134,10 +134,20 @@ def generate_launch_description():
         }.items()
     )
 
+    rqt_color_rqt_node = Node(
+            package='rqt_image_view',
+            executable='rqt_image_view',
+            name='rqt_image_view',
+            arguments=[
+                "/yolo/dbg_image",
+            ]
+    )
+
     yolo_launch = TimerAction(
     period=5.0,
     actions=[
-        yolo_ros_included_launch
+        yolo_ros_included_launch,
+        rqt_color_rqt_node,
     ],
 )
 
