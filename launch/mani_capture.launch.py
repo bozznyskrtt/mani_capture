@@ -107,20 +107,40 @@ def generate_launch_description():
     )
 
     # Step 5: YOLO object detection + TF (t=5 s) 
-    yolo_node = TimerAction(
-        period=5.0,
-        actions=[
-            Node(
-                package='yolo_ros2',
-                executable='object_detection_tf_node',
-                name='object_detection_tf_node',
-                parameters=[{
-                    # 'target_name': 'J6_wrist3',
-                    # 'model_path': '~/camera_data/datasets_2/runs/detect/train/weights/best.pt',    
-                }],
-            )
-        ],
+    # yolo_node = TimerAction(
+    #     period=5.0,
+    #     actions=[
+    #         Node(
+    #             package='yolo_ros2',
+    #             executable='object_detection_tf_node',
+    #             name='object_detection_tf_node',
+    #             parameters=[{
+    #                 # 'target_name': 'J6_wrist3',
+    #                 # 'model_path': '~/camera_data/datasets_2/runs/detect/train/weights/best.pt',    
+    #             }],
+    #         )
+    #     ],
+    # )
+
+    # Step 5: YOLO object detection + TF
+    yolo_ros_pkg_dir = get_package_share_directory('yolo_bringup')
+    yolo_bringup_launch_path = os.path.join(yolo_ros_pkg_dir, 'launch', 'yolo.launch.py')
+    yolo_ros_included_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(yolo_bringup_launch_path),
+        launch_arguments={
+            'model': "/home/robot/camera_data/datasets_2/runs/detect/train/weights/best.pt",
+            'use_3d': "True",
+            'device': "cuda:0",
+        }.items()
     )
+
+    yolo_launch = TimerAction(
+    period=5.0,
+    actions=[
+        yolo_ros_included_launch
+    ],
+)
+
 
     # Step 6: hebi_a-2085-06g_moveit_config move_group (t=5 s) 
     hebi_moveit_move_group = TimerAction(
@@ -194,7 +214,7 @@ def generate_launch_description():
         hebi_bringup_move_group,
         camera_launch,
         static_tf,
-        yolo_node,
+        yolo_launch,
         hebi_moveit_move_group,
         hebi_movers,
         snapshot_node,
