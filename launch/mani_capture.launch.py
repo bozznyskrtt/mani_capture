@@ -128,7 +128,7 @@ def generate_launch_description():
     yolo_ros_included_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(yolo_bringup_launch_path),
         launch_arguments={
-            'model': "yolo26s.pt",
+            'model': "yolo26m.pt",
             'use_3d': "True",
             'device': "cuda:0",
         }.items()
@@ -234,7 +234,7 @@ def generate_launch_description():
         threshold_deg_arg,
         idle_flush_sec_arg,
         arm_bringup,
-        hebi_bringup_move_group,
+        # hebi_bringup_move_group,
         camera_launch,
         static_tf,
         yolo_launch,
@@ -245,6 +245,6 @@ def generate_launch_description():
 
 
 """
-ros2 launch snapshot mani_capture.launch.py
-ros2 launch snapshot mani_postprocess.launch.py
+ros2 launch mani_capture mani_capture.launch.py
+ros2 launch mani_capture mani_postprocess.launch.py
 """
