@@ -21,9 +21,10 @@ Launch args:
 """
 
 import os
+import glob
+import subprocess
 
 from ament_index_python.packages import get_package_share_directory
-
 from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
@@ -36,6 +37,15 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
+
+    share_dir = get_package_share_directory("mani_capture")
+    subprocess.run(["uv", "sync", "--project", share_dir, "--no-editable"], check=True)
+    venv_site_pkgs = glob.glob(
+        os.path.join(share_dir, ".venv", "lib", "python*", "site-packages")
+    )
+    existing_pythonpath = os.environ.get("PYTHONPATH", "")
+    new_pythonpath = ":".join(venv_site_pkgs + [existing_pythonpath]).strip(":")
+
     # Launch arguments
     outdir_arg = DeclareLaunchArgument(
         'outdir',
