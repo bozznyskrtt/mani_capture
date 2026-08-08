@@ -208,7 +208,7 @@ def generate_launch_description():
         actions=[
             Node(
                 package='mani_capture',
-                executable='j6_trigger_capture_node_rgbd_fk',
+                executable='j6_trigger_capture_node_rgbd_fk.py',
                 name='mani_capture',
                 parameters=[{
                     'joint_name': 'J6_wrist3',
