@@ -1,7 +1,11 @@
 [project]
-name = "mani_capture"
-version = "1.0.0"
-description = "mani capture"
+name = "mani-capture"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Haruki Isono", email = "haruki.isono861@gmail.com" }
+]
 requires-python = ">=3.12"
 dependencies = [
     "matplotlib>=3.10.8",
@@ -20,5 +24,5 @@ dependencies = [
 ]
 
 [build-system]
-requires = ["uv_build>=0.11.27,<0.12.0"]
+requires = ["uv_build>=0.11.29,<0.12.0"]
 build-backend = "uv_build"
