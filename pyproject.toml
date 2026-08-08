@@ -2,7 +2,7 @@
 name = "mani_capture"
 version = "1.0.0"
 description = "mani capture"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dependencies = [
     "matplotlib>=3.10.8",
     "numpy>=1.26.4",
