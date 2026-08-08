@@ -28,12 +28,12 @@ cd ~/hebi_ws/src
 # Install the package
 git clone https://github.com/bozznyskrtt/mani_capture.git
 
+# Grant execution permissions
+cd ~/hebi_ws/src/mani_capture/scripts/
+sudo chmod +x depth_crop.py tsdf_fuse_from_npy_crop.py color_image_capture.py j6_trigger_rgbd_fk.py tsdf_fuse_from_npy.py
+
 # If meshlab is not installed run this
 sudo apt install meshlab
-
-# Build 
-colcon build --symlink-install --packages-select mani_capture
-source install/setup.bash
 ```
 
 ### Install `uv`
@@ -50,6 +50,13 @@ echo 'eval "$(uvx --generate-shell-completion bash)"' >> ~/.bashrc
 ```bash
 cd ~/hebi_ws/src/mani_capture/
 uv sync
+```
+
+### Colon build
+```bash
+# Build 
+colcon build --symlink-install --packages-select mani_capture
+source install/setup.bash
 ```
 
 ## 🙂 Introduction
