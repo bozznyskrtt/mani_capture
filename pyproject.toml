@@ -5,7 +5,7 @@ description = "mani capture"
 requires-python = ">=3.12"
 dependencies = [
     "matplotlib>=3.10.8",
-    "numpy>=1.26.4",
+    "numpy<2",
     "open3d>=0.19.0",
     "opencv-python>=4.11.0.86",
     "pillow>=12.1.1",
