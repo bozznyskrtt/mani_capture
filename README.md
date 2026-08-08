@@ -18,36 +18,40 @@ You can find it by open requirements.txt or heres are the list
 * trimesh==4.11.3
 * tqdm==4.67.3
 
-## 🛠️ Setting up your Workspace
+## 🛠️ Setup
+### Setting up your Workspace
 Run the following command to set up and Download the package.
 ```bash
 # Go to the workspace directory
 cd ~/hebi_ws/src
 
-#Install the package
+# Install the package
 git clone https://github.com/bozznyskrtt/mani_capture.git
 
-#if meshlab is not installed run this
+# If meshlab is not installed run this
 sudo apt install meshlab
 
-#build 
-colcon build --symlink-install
+# Build 
+colcon build --symlink-install --packages-select mani_capture
 source install/setup.bash
 ```
 
-## Install dependencies
+### Install `uv`
 ```bash
-pip install -r requirements.txt
+curl -LsSf https://astral.sh/uv/install.sh | sh
+echo 'eval "$(uv generate-shell-completion bash)"' >> ~/.bashrc
+echo 'eval "$(uvx --generate-shell-completion bash)"' >> ~/.bashrc
 ```
-If you're facing the version conflict problem, check your pip version. I'm using python 3.10 and pip 22.0.2
+> [!TIP]
+> An extremely fast Python package and project manager, written in Rust.  
+> [Installing uv](https://docs.astral.sh/uv/getting-started/installation/)
 
+### Install dependencies
 ```bash
-#check your pip version
-pip --version
-
-#install pip 22.0.2
-python3 -m pip install --upgrade pip==22.0.2
+cd ~/hebi_ws/src/mani_capture/
+uv sync
 ```
+
 ## 🙂 Introduction
 
 There're 2 main commands you'll be using.
