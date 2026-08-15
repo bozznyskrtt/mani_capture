@@ -33,7 +33,7 @@ def generate_launch_description():
     )
     output_path_arg = DeclareLaunchArgument(
         'output_path',
-        default_value=os.path.expanduser('~/desktop/ply_outputs'),
+        default_value=os.path.expanduser('~/pointcloud2ply_outputs'),
         description='Directory path where the PLY files will be saved'
     )
     pointcloud_topic_arg = DeclareLaunchArgument(
