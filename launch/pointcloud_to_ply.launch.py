@@ -12,7 +12,7 @@ def generate_launch_description():
         description='Max neighbor points used to compute surface normals (default=30)'
     )
     normal_radius_arg = DeclareLaunchArgument(
-        'normal_radius', default_value='0.05',
+        'normal_radius', default_value='0.1',
         description='Search radius (meters) for calculating surface normals'
     )
     nso_nb_neighbors_arg = DeclareLaunchArgument(
@@ -38,7 +38,7 @@ def generate_launch_description():
     )
     pointcloud_topic_arg = DeclareLaunchArgument(
         'pointcloud_topic',
-        default_value='camera/depth/points',
+        default_value='/camera/depth_registered/points',
         description='The ROS 2 topic name for incoming point cloud data'
     )
     poisson_density_quantile_arg = DeclareLaunchArgument(
@@ -67,7 +67,7 @@ def generate_launch_description():
     )
     voxel_size_arg = DeclareLaunchArgument(
         'voxel_size',
-        default_value='0.0',
+        default_value='0.01',
         description='Leaf size in meters for voxel downsampling'
     )
 

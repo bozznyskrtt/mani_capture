@@ -29,6 +29,7 @@ from launch.actions import (
 )
 from launch.event_handlers import OnProcessExit
 from launch.substitutions import LaunchConfiguration
+from ament_index_python.packages import get_package_share_directory
 
 
 # Absolute paths to the post-processing scripts (source tree locations)

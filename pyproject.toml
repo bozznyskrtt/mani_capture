@@ -1,5 +1,5 @@
 [project]
-name = "mani-capture"
+name = "mani_capture"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
