@@ -21,6 +21,7 @@ install(
     scripts/j6_trigger_rgbd_fk.py
     scripts/tsdf_fuse_from_npy_crop.py
     scripts/tsdf_fuse_from_npy.py
+    scripts/convert_image2ply.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

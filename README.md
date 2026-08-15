@@ -53,6 +53,12 @@ uv sync
 ```
 
 ### Colon build
+Permision
+```bash
+sudo chmod +x ~/hebi_ws/src/mani_capture/scripts/*.py
+```
+
+Build
 ```bash
 # Build 
 colcon build --symlink-install --packages-select mani_capture
