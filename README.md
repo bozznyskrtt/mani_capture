@@ -30,10 +30,15 @@ git clone https://github.com/bozznyskrtt/mani_capture.git
 
 # Grant execution permissions
 cd ~/hebi_ws/src/mani_capture/scripts/
-sudo chmod +x depth_crop.py tsdf_fuse_from_npy_crop.py color_image_capture.py j6_trigger_rgbd_fk.py tsdf_fuse_from_npy.py
+sudo chmod +x ~/hebi_ws/src/mani_capture/scripts/*.py
 
 # If meshlab is not installed run this
 sudo apt install meshlab
+```
+
+### Install ROS2 packages
+```bash
+sudo apt install ros-$ROS_DISTRO-pointcloud-to-ply
 ```
 
 ### Install `uv`
@@ -53,12 +58,6 @@ uv sync
 ```
 
 ### Colon build
-Permision
-```bash
-sudo chmod +x ~/hebi_ws/src/mani_capture/scripts/*.py
-```
-
-Build
 ```bash
 # Build 
 colcon build --symlink-install --packages-select mani_capture
@@ -102,5 +101,7 @@ Change the absolute path for your this cloned repository.
 Change to your depth image saved path.
 
 
+## 📚 Reference
 
-
+### ROS2 packages
+- [pointcloud_to_ply](https://docs.ros.org/en/jazzy/p/pointcloud_to_ply/)
