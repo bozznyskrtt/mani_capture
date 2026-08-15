@@ -8,8 +8,8 @@ def generate_launch_description():
 
     # --- Declare Launch Arguments (Command line options) ---
     normal_max_nn_arg = DeclareLaunchArgument(
-        'normal_max_nn', default_value='30',
-        description='Max neighbor points used to compute surface normals'
+        'normal_max_nn', default_value='0',
+        description='Max neighbor points used to compute surface normals (default=30)'
     )
     normal_radius_arg = DeclareLaunchArgument(
         'normal_radius', default_value='0.05',
@@ -28,8 +28,8 @@ def generate_launch_description():
         description='Base name for the generated output file'
     )
     output_format_arg = DeclareLaunchArgument(
-        'output_format', default_value='obj',
-        description='File encoding format'
+        'output_format', default_value='ply',
+        description='"obj" or "ply"'
     )
     output_path_arg = DeclareLaunchArgument(
         'output_path',
@@ -38,16 +38,16 @@ def generate_launch_description():
     )
     pointcloud_topic_arg = DeclareLaunchArgument(
         'pointcloud_topic',
-        default_value='/camera/depth_registered/points',
+        default_value='camera/depth/points',
         description='The ROS 2 topic name for incoming point cloud data'
     )
     poisson_density_quantile_arg = DeclareLaunchArgument(
         'poisson_density_quantile', default_value='0.05',
-        description='Density threshold to filter out low-confidence mesh regions'
+        description='Density threshold to filter out low-confidence mesh regions (Note: Not fully supported in PCL)'
     )
     poisson_depth_arg = DeclareLaunchArgument(
         'poisson_depth', default_value='9',
-        description='Octree depth for Poisson reconstruction (higher = sharper but slower)'
+        description='Octree depth for Poisson reconstruction (8-12 typical range)'
     )
     remove_statistical_outliers_arg = DeclareLaunchArgument(
         'remove_statistical_outliers', default_value='True',
@@ -67,7 +67,7 @@ def generate_launch_description():
     )
     voxel_size_arg = DeclareLaunchArgument(
         'voxel_size',
-        default_value='0.01',
+        default_value='0.0',
         description='Leaf size in meters for voxel downsampling'
     )
 
