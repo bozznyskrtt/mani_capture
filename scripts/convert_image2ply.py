@@ -47,13 +47,13 @@ class ConvertImage2Ply(Node):
         # ---- Validate params ----
         if fx <= 0.0 or fy <= 0.0:
             self.get_logger().error(
-                f"fx/fy は正の値が必要です: fx={fx}, fy={fy}"
+                f"fx/fy must be positive values: fx={fx}, fy={fy}"
             )
             return
 
         if depth_scale <= 0.0:
             self.get_logger().error(
-                f"depth_scale は正の値が必要です: {depth_scale}"
+                f"depth_scale must be a positive value: {depth_scale}"
             )
             return
 
@@ -70,7 +70,7 @@ class ConvertImage2Ply(Node):
             )
         except Exception as e:
             self.get_logger().exception(
-                f"変換処理中に例外が発生しました: {e}"
+                f"Exception occurred during conversion: {e}"
             )
 
     def batch_convert_depth_to_ply(
@@ -89,39 +89,39 @@ class ConvertImage2Ply(Node):
 
         if not input_dir.exists() or not input_dir.is_dir():
             self.get_logger().error(
-                f"入力ディレクトリが存在しないか不正です: {input_dir}"
+                f"Input directory does not exist or is invalid: {input_dir}"
             )
             return
 
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        # PNGファイル一覧
+        # List PNG files
         png_files = sorted(input_dir.glob("*.png"))
         total_files = len(png_files)
 
         if total_files == 0:
             self.get_logger().warning(
-                f"[{input_folder}] にPNGファイルが見つかりませんでした。"
+                f"No PNG files found in [{input_folder}]."
             )
             return
 
-        self.get_logger().info(f"変換対象: {total_files} 件")
+        self.get_logger().info(f"Files to convert: {total_files}")
 
-        # 1枚目の読み込みで基準サイズを決定
+        # Read the first image to determine base size
         first_img = cv2.imread(str(png_files[0]), cv2.IMREAD_UNCHANGED)
         if first_img is None:
-            self.get_logger().error(f"画像を読み込めません: {png_files[0]}")
+            self.get_logger().error(f"Failed to read image: {png_files[0]}")
             return
 
         if first_img.ndim != 2:
             self.get_logger().error(
-                f"最初の画像が単一チャネル深度画像ではありません: {png_files[0].name}"
+                f"The first image is not a single-channel depth image: {png_files[0].name}"
             )
             return
 
         base_h, base_w = first_img.shape[:2]
 
-        # 主点が未指定（負値）なら画像中央
+        # If principal point is unspecified (negative), use image center
         if cx < 0.0:
             cx = (base_w - 1) / 2.0
         if cy < 0.0:
@@ -131,7 +131,7 @@ class ConvertImage2Ply(Node):
             f"camera intrinsics: fx={fx}, fy={fy}, cx={cx}, cy={cy}, depth_scale={depth_scale}"
         )
 
-        # 基準サイズに対する pixel grid を事前計算
+        # Precompute pixel grid for the base size
         u_base, v_base = np.meshgrid(
             np.arange(base_w, dtype=np.float32),
             np.arange(base_h, dtype=np.float32)
@@ -145,42 +145,42 @@ class ConvertImage2Ply(Node):
             depth_img = cv2.imread(str(file_path), cv2.IMREAD_UNCHANGED)
             if depth_img is None:
                 self.get_logger().warning(
-                    f"スキップ（読み込み失敗）: {file_path.name}"
+                    f"Skipped (read failed): {file_path.name}"
                 )
                 skipped += 1
                 continue
 
             if depth_img.ndim != 2:
                 self.get_logger().warning(
-                    f"スキップ（グレースケールではありません）: {file_path.name}"
+                    f"Skipped (not grayscale): {file_path.name}"
                 )
                 skipped += 1
                 continue
 
             h, w = depth_img.shape[:2]
 
-            # 画像サイズ不一致対応
+            # Handle image size mismatch
             if (h, w) != (base_h, base_w):
                 self.get_logger().warning(
-                    f"スキップ（画像サイズ不一致）: {file_path.name} "
+                    f"Skipped (image size mismatch): {file_path.name} "
                     f"[{w}x{h}] != base[{base_w}x{base_h}]"
                 )
                 skipped += 1
                 continue
 
-            # 有効な深度値
+            # Valid depth pixels
             valid = depth_img > 0
             if not np.any(valid):
                 self.get_logger().warning(
-                    f"スキップ（有効な深度値なし）: {file_path.name}"
+                    f"Skipped (no valid depth values): {file_path.name}"
                 )
                 skipped += 1
                 continue
 
-            # 深度値をメートルに変換
+            # Convert depth values to meters
             z = depth_img[valid].astype(np.float32) / depth_scale
 
-            # ピンホールカメラモデルによる逆投影
+            # Back-project using pinhole camera model
             x = (u_base[valid] - cx) * z / fx
             y = (v_base[valid] - cy) * z / fy
 
@@ -199,7 +199,7 @@ class ConvertImage2Ply(Node):
 
             if not success:
                 self.get_logger().error(
-                    f"PLY書き込み失敗: {output_path}"
+                    f"Failed to write PLY: {output_path}"
                 )
                 failed += 1
                 continue
@@ -208,13 +208,13 @@ class ConvertImage2Ply(Node):
 
             if idx % 10 == 0 or idx == total_files:
                 self.get_logger().info(
-                    f"進捗: {idx}/{total_files} "
+                    f"Progress: {idx}/{total_files} "
                     f"(converted={converted}, skipped={skipped}, failed={failed}) "
                     f"{file_path.name} -> {output_path.name}"
                 )
 
         self.get_logger().info(
-            "変換完了: "
+            "Conversion finished: "
             f"total={total_files}, converted={converted}, skipped={skipped}, failed={failed}"
         )
 
@@ -223,9 +223,9 @@ def main(args=None):
     rclpy.init(args=args)
     node = ConvertImage2Ply()
 
-    # timerで1回処理を実行するためspin
+    # Spin to run the one-shot timer callback
     rclpy.spin_once(node, timeout_sec=0.1)
-    # 念のためイベントを少し回す
+    # Extra spin for safety
     rclpy.spin_once(node, timeout_sec=0.1)
 
     node.destroy_node()
