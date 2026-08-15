@@ -6,31 +6,30 @@ from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
 
-    #  Declare Launch Arguments (Command line options)
-
+    # --- Declare Launch Arguments (Command line options) ---
     normal_max_nn_arg = DeclareLaunchArgument(
         'normal_max_nn', default_value='30',
         description='Max neighbor points used to compute surface normals'
     )
     normal_radius_arg = DeclareLaunchArgument(
-        'normal_radius', default_value='0.03',
+        'normal_radius', default_value='0.05',
         description='Search radius (meters) for calculating surface normals'
     )
     nso_nb_neighbors_arg = DeclareLaunchArgument(
-        'nso_nb_neighbors', default_value='50',
+        'nso_nb_neighbors', default_value='20',
         description='Number of neighbors to analyze for outlier distance checking'
     )
     nso_std_ratio_arg = DeclareLaunchArgument(
-        'nso_std_ratio', default_value='1.0',
+        'nso_std_ratio', default_value='2.0',
         description='Standard deviation multiplier threshold for noise filtering'
     )
     output_basename_arg = DeclareLaunchArgument(
-        'output_basename', default_value='scan_result',
+        'output_basename', default_value='mesh',
         description='Base name for the generated output file'
     )
     output_format_arg = DeclareLaunchArgument(
-        'output_format', default_value='binary',
-        description='File encoding format (ascii or binary)'
+        'output_format', default_value='obj',
+        description='File encoding format'
     )
     output_path_arg = DeclareLaunchArgument(
         'output_path',
@@ -39,11 +38,7 @@ def generate_launch_description():
     )
     pointcloud_topic_arg = DeclareLaunchArgument(
         'pointcloud_topic',
-        default_value='/camera/depth/color/points',
-        description='The ROS 2 topic name for incoming point cloud data'
-    )
-    pointcloud_topic_arg = DeclareLaunchArgument(
-        'pointcloud_topic', default_value='/camera/depth/color/points',
+        default_value='/camera/depth_registered/points',
         description='The ROS 2 topic name for incoming point cloud data'
     )
     poisson_density_quantile_arg = DeclareLaunchArgument(
@@ -51,23 +46,23 @@ def generate_launch_description():
         description='Density threshold to filter out low-confidence mesh regions'
     )
     poisson_depth_arg = DeclareLaunchArgument(
-        'poisson_depth', default_value='8',
+        'poisson_depth', default_value='9',
         description='Octree depth for Poisson reconstruction (higher = sharper but slower)'
     )
     remove_statistical_outliers_arg = DeclareLaunchArgument(
-        'remove_statistical_outliers', default_value='true',
+        'remove_statistical_outliers', default_value='True',
         description='Enable or disable statistical outlier filtering (true/false)'
     )
     shutdown_after_save_arg = DeclareLaunchArgument(
-        'shutdown_after_save', default_value='false',
+        'shutdown_after_save', default_value='True',
         description='Terminate the node automatically once the PLY file is saved (true/false)'
     )
     start_type_description_service_arg = DeclareLaunchArgument(
-        'start_type_description_service', default_value='true',
+        'start_type_description_service', default_value='True',
         description='Flag to enable ROS 2 topic/service type description logging (true/false)'
     )
     use_sim_time_arg = DeclareLaunchArgument(
-        'use_sim_time', default_value='false',
+        'use_sim_time', default_value='False',
         description='Force node to synchronize with simulated clock time (true/false)'
     )
     voxel_size_arg = DeclareLaunchArgument(
@@ -77,7 +72,6 @@ def generate_launch_description():
     )
 
     # Define Node Configuration (Mapping configurations to node parameters)
-
     pointcloud_to_ply_node = Node(
         package='pointcloud_to_ply',
         executable='pointcloud_to_ply_node',
