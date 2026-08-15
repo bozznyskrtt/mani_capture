@@ -1,91 +1,243 @@
 #!/usr/bin/env python3
 
+import rclpy
+from rclpy.node import Node
+
 from pathlib import Path
 import cv2
 import numpy as np
 import open3d as o3d
 
 
-def batch_convert_depth_to_ply(
-    input_folder: str,
-    output_folder: str,
-    fx: float,
-    fy: float,
-    cx: float = None,
-    cy: float = None,
-    depth_scale: float = 1000.0,
-):
-    input_dir = Path(input_folder)
-    output_dir = Path(output_folder)
-    output_dir.mkdir(parents=True, exist_ok=True)
+class ConvertImage2Ply(Node):
 
-    # フォルダ内のPNGファイル一覧を取得
-    png_files = sorted(list(input_dir.glob("*.png")))
-    total_files = len(png_files)
+    def __init__(self):
+        super().__init__('convert_image_ply')
 
-    if total_files == 0:
-        print(f"[{input_folder}] にPNGファイルが見つかりませんでした。")
-        return
+        self.declare_parameter(
+            'input_dir',
+            './depth_images'
+        )
+        self.declare_parameter(
+            'output_dir',
+            './ply_outputs'
+        )
 
-    print(f"変換対象: {total_files} 件")
+        self.declare_parameter(
+            'fx',
+            525.0
+        )
+        self.declare_parameter(
+            'fy',
+            525.0
+        )
+        self.declare_parameter(
+            'cx',
+            None
+        )
+        self.declare_parameter(
+            'cy',
+            None
+        )
+        self.declare_parameter(
+            'depth_scale',
+            1000.0
+        )
 
-    # 1枚目を読み込んでグリッド座標を事前計算（高速化）
-    first_img = cv2.imread(str(png_files[0]), cv2.IMREAD_UNCHANGED)
-    height, width = first_img.shape[:2]
+        input_dir = self.get_parameter(
+            'input_dir'
+        ).value
 
-    if cx is None:
-        cx = width / 2.0
-    if cy is None:
-        cy = height / 2.0
+        output_dir = self.get_parameter(
+            'output_dir'
+        ).value
 
-    u, v = np.meshgrid(np.arange(width), np.arange(height))
+        fx = self.get_parameter(
+            'fx'
+        ).value
 
-    for idx, file_path in enumerate(png_files, 1):
-        depth_img = cv2.imread(str(file_path), cv2.IMREAD_UNCHANGED)
-        if depth_img is None:
-            print(f"スキップ (読み込み失敗): {file_path.name}")
-            continue
+        fy = self.get_parameter(
+            'fy'
+        ).value
 
-        # 有効な深度値（0より大きい値）のマスク
-        valid = depth_img > 0
-        if not np.any(valid):
-            print(f"スキップ (有効な深度値なし): {file_path.name}")
-            continue
+        cx = self.get_parameter(
+            'cx'
+        ).value
 
-        # 3D座標へ逆投影
-        z = depth_img[valid] / depth_scale
-        x = (u[valid] - cx) * z / fx
-        y = (v[valid] - cy) * z / fy
+        cy = self.get_parameter(
+            'cy'
+        ).value
 
-        points = np.stack((x, y, z), axis=-1)
+        depth_scale = self.get_parameter(
+            'depth_scale'
+        ).value
 
-        # PLY書き出し (write_ascii=False でバイナリ保存し高速・省容量化)
-        pcd = o3d.geometry.PointCloud()
-        pcd.points = o3d.utility.Vector3dVector(points)
+        self.batch_convert_depth_to_ply(
+            input_folder=input_dir,
+            output_folder=output_dir,
+            fx=fx,
+            fy=fy,
+            cx=cx,
+            cy=cy,
+            depth_scale=depth_scale,
+        )
 
-        output_path = output_dir / f"{file_path.stem}.ply"
-        o3d.io.write_point_cloud(str(output_path), pcd, write_ascii=False)
+    def batch_convert_depth_to_ply(
+        self,
+        input_folder: str,
+        output_folder: str,
+        fx: float,
+        fy: float,
+        cx: float = None,
+        cy: float = None,
+        depth_scale: float = 1000.0,
+    ):
+        input_dir = Path(input_folder)
+        output_dir = Path(output_folder)
 
-        if idx % 10 == 0 or idx == total_files:
-            print(f"進捗: {idx}/{total_files} ({file_path.name} -> {output_path.name})")
+        output_dir.mkdir(parents=True, exist_ok=True)
 
-    print("\nすべての変換が完了しました。")
+        # PNGファイル一覧
+        png_files = sorted(input_dir.glob("*.png"))
+        total_files = len(png_files)
+
+        if total_files == 0:
+            self.get_logger().warning(
+                f"[{input_folder}] にPNGファイルが見つかりませんでした。"
+            )
+            return
+
+        self.get_logger().info(
+            f"変換対象: {total_files} 件"
+        )
+
+        # 1枚目から画像サイズを取得
+        first_img = cv2.imread(
+            str(png_files[0]),
+            cv2.IMREAD_UNCHANGED
+        )
+
+        if first_img is None:
+            self.get_logger().error(
+                f"画像を読み込めません: {png_files[0]}"
+            )
+            return
+
+        height, width = first_img.shape[:2]
+
+        # 主点が指定されていなければ画像中央
+        if cx is None:
+            cx = width / 2.0
+
+        if cy is None:
+            cy = height / 2.0
+
+        # ピクセル座標を事前計算
+        u, v = np.meshgrid(
+            np.arange(width),
+            np.arange(height)
+        )
+
+        for idx, file_path in enumerate(png_files, 1):
+
+            depth_img = cv2.imread(
+                str(file_path),
+                cv2.IMREAD_UNCHANGED
+            )
+
+            if depth_img is None:
+                self.get_logger().warning(
+                    f"スキップ（読み込み失敗）: {file_path.name}"
+                )
+                continue
+
+            # 深度画像がカラーだった場合への対策
+            if depth_img.ndim != 2:
+                self.get_logger().warning(
+                    f"スキップ（グレースケールではありません）: "
+                    f"{file_path.name}"
+                )
+                continue
+
+            # 有効な深度値
+            valid = depth_img > 0
+
+            if not np.any(valid):
+                self.get_logger().warning(
+                    f"スキップ（有効な深度値なし）: "
+                    f"{file_path.name}"
+                )
+                continue
+
+            # 深度値をメートルに変換
+            z = depth_img[valid].astype(np.float32) / depth_scale
+
+            # ピンホールカメラモデルによる逆投影
+            x = (
+                (u[valid] - cx)
+                * z
+                / fx
+            )
+
+            y = (
+                (v[valid] - cy)
+                * z
+                / fy
+            )
+
+            points = np.stack(
+                (x, y, z),
+                axis=-1
+            )
+
+            # Open3D PointCloud
+            pcd = o3d.geometry.PointCloud()
+
+            pcd.points = o3d.utility.Vector3dVector(
+                points
+            )
+
+            # PLY出力
+            output_path = (
+                output_dir / f"{file_path.stem}.ply"
+            )
+
+            success = o3d.io.write_point_cloud(
+                str(output_path),
+                pcd,
+                write_ascii=False
+            )
+
+            if not success:
+                self.get_logger().error(
+                    f"PLY書き込み失敗: {output_path}"
+                )
+                continue
+
+            if idx % 10 == 0 or idx == total_files:
+                self.get_logger().info(
+                    f"進捗: {idx}/{total_files} "
+                    f"({file_path.name} -> "
+                    f"{output_path.name})"
+                )
+
+        self.get_logger().info(
+            "すべての変換が完了しました。"
+        )
 
 
-# --- 実行設定 ---
+def main(args=None):
+
+    rclpy.init(args=args)
+
+    node = ConvertImage2Ply()
+
+    # 今回は__init__内で処理が完了するため
+    # spinは不要
+    node.destroy_node()
+
+    rclpy.shutdown()
+
+
 if __name__ == "__main__":
-    INPUT_DIR = "./depth_images"  # 深度PNGが入っているフォルダ
-    OUTPUT_DIR = "./ply_outputs"  # PLYの出力先フォルダ
-
-    # カメラパラメータ（お使いの環境に合わせて変更）
-    FX = 525.0
-    FY = 525.0
-    DEPTH_SCALE = 1000.0  # 1mm単位の場合は1000.0
-
-    batch_convert_depth_to_ply(
-        input_folder=INPUT_DIR,
-        output_folder=OUTPUT_DIR,
-        fx=FX,
-        fy=FY,
-        depth_scale=DEPTH_SCALE,
-    )
+    main()
