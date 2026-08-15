@@ -10,77 +10,68 @@ import open3d as o3d
 
 
 class ConvertImage2Ply(Node):
-
     def __init__(self):
         super().__init__('convert_image_ply')
 
-        self.declare_parameter(
-            'input_dir',
-            './depth_images'
-        )
-        self.declare_parameter(
-            'output_dir',
-            './ply_outputs'
-        )
+        # ---- Parameters ----
+        self.declare_parameter('input_dir', './depth_images')
+        self.declare_parameter('output_dir', './ply_outputs')
 
-        self.declare_parameter(
-            'fx',
-            525.0
-        )
-        self.declare_parameter(
-            'fy',
-            525.0
-        )
-        self.declare_parameter(
-            'cx',
-            None
-        )
-        self.declare_parameter(
-            'cy',
-            None
-        )
-        self.declare_parameter(
-            'depth_scale',
-            1000.0
-        )
+        self.declare_parameter('fx', 456.701904296875)
+        self.declare_parameter('fy', 456.701904296875)
 
-        input_dir = self.get_parameter(
-            'input_dir'
-        ).value
+        self.declare_parameter('cx', 331.47186279296875)
+        self.declare_parameter('cy', 242.51722717285156)
 
-        output_dir = self.get_parameter(
-            'output_dir'
-        ).value
+        self.declare_parameter('depth_scale', 1000.0)
+        self.declare_parameter('write_ascii', False)
 
-        fx = self.get_parameter(
-            'fx'
-        ).value
+        self._run_once_timer = self.create_timer(0.0, self._run_once)
+        self._has_run = False
 
-        fy = self.get_parameter(
-            'fy'
-        ).value
+    def _run_once(self):
+        if self._has_run:
+            return
+        self._has_run = True
+        self._run_once_timer.cancel()
 
-        cx = self.get_parameter(
-            'cx'
-        ).value
+        input_dir = self.get_parameter('input_dir').value
+        output_dir = self.get_parameter('output_dir').value
+        fx = float(self.get_parameter('fx').value)
+        fy = float(self.get_parameter('fy').value)
+        cx = float(self.get_parameter('cx').value)
+        cy = float(self.get_parameter('cy').value)
+        depth_scale = float(self.get_parameter('depth_scale').value)
+        write_ascii = bool(self.get_parameter('write_ascii').value)
 
-        cy = self.get_parameter(
-            'cy'
-        ).value
+        # ---- Validate params ----
+        if fx <= 0.0 or fy <= 0.0:
+            self.get_logger().error(
+                f"fx/fy は正の値が必要です: fx={fx}, fy={fy}"
+            )
+            return
 
-        depth_scale = self.get_parameter(
-            'depth_scale'
-        ).value
+        if depth_scale <= 0.0:
+            self.get_logger().error(
+                f"depth_scale は正の値が必要です: {depth_scale}"
+            )
+            return
 
-        self.batch_convert_depth_to_ply(
-            input_folder=input_dir,
-            output_folder=output_dir,
-            fx=fx,
-            fy=fy,
-            cx=cx,
-            cy=cy,
-            depth_scale=depth_scale,
-        )
+        try:
+            self.batch_convert_depth_to_ply(
+                input_folder=input_dir,
+                output_folder=output_dir,
+                fx=fx,
+                fy=fy,
+                cx=cx,
+                cy=cy,
+                depth_scale=depth_scale,
+                write_ascii=write_ascii,
+            )
+        except Exception as e:
+            self.get_logger().exception(
+                f"変換処理中に例外が発生しました: {e}"
+            )
 
     def batch_convert_depth_to_ply(
         self,
@@ -88,12 +79,19 @@ class ConvertImage2Ply(Node):
         output_folder: str,
         fx: float,
         fy: float,
-        cx: float = None,
-        cy: float = None,
+        cx: float = -1.0,
+        cy: float = -1.0,
         depth_scale: float = 1000.0,
+        write_ascii: bool = False,
     ):
         input_dir = Path(input_folder)
         output_dir = Path(output_folder)
+
+        if not input_dir.exists() or not input_dir.is_dir():
+            self.get_logger().error(
+                f"入力ディレクトリが存在しないか不正です: {input_dir}"
+            )
+            return
 
         output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -107,135 +105,130 @@ class ConvertImage2Ply(Node):
             )
             return
 
-        self.get_logger().info(
-            f"変換対象: {total_files} 件"
-        )
+        self.get_logger().info(f"変換対象: {total_files} 件")
 
-        # 1枚目から画像サイズを取得
-        first_img = cv2.imread(
-            str(png_files[0]),
-            cv2.IMREAD_UNCHANGED
-        )
-
+        # 1枚目の読み込みで基準サイズを決定
+        first_img = cv2.imread(str(png_files[0]), cv2.IMREAD_UNCHANGED)
         if first_img is None:
+            self.get_logger().error(f"画像を読み込めません: {png_files[0]}")
+            return
+
+        if first_img.ndim != 2:
             self.get_logger().error(
-                f"画像を読み込めません: {png_files[0]}"
+                f"最初の画像が単一チャネル深度画像ではありません: {png_files[0].name}"
             )
             return
 
-        height, width = first_img.shape[:2]
+        base_h, base_w = first_img.shape[:2]
 
-        # 主点が指定されていなければ画像中央
-        if cx is None:
-            cx = width / 2.0
+        # 主点が未指定（負値）なら画像中央
+        if cx < 0.0:
+            cx = (base_w - 1) / 2.0
+        if cy < 0.0:
+            cy = (base_h - 1) / 2.0
 
-        if cy is None:
-            cy = height / 2.0
-
-        # ピクセル座標を事前計算
-        u, v = np.meshgrid(
-            np.arange(width),
-            np.arange(height)
+        self.get_logger().info(
+            f"camera intrinsics: fx={fx}, fy={fy}, cx={cx}, cy={cy}, depth_scale={depth_scale}"
         )
 
+        # 基準サイズに対する pixel grid を事前計算
+        u_base, v_base = np.meshgrid(
+            np.arange(base_w, dtype=np.float32),
+            np.arange(base_h, dtype=np.float32)
+        )
+
+        converted = 0
+        skipped = 0
+        failed = 0
+
         for idx, file_path in enumerate(png_files, 1):
-
-            depth_img = cv2.imread(
-                str(file_path),
-                cv2.IMREAD_UNCHANGED
-            )
-
+            depth_img = cv2.imread(str(file_path), cv2.IMREAD_UNCHANGED)
             if depth_img is None:
                 self.get_logger().warning(
                     f"スキップ（読み込み失敗）: {file_path.name}"
                 )
+                skipped += 1
                 continue
 
-            # 深度画像がカラーだった場合への対策
             if depth_img.ndim != 2:
                 self.get_logger().warning(
-                    f"スキップ（グレースケールではありません）: "
-                    f"{file_path.name}"
+                    f"スキップ（グレースケールではありません）: {file_path.name}"
                 )
+                skipped += 1
+                continue
+
+            h, w = depth_img.shape[:2]
+
+            # 画像サイズ不一致対応
+            if (h, w) != (base_h, base_w):
+                self.get_logger().warning(
+                    f"スキップ（画像サイズ不一致）: {file_path.name} "
+                    f"[{w}x{h}] != base[{base_w}x{base_h}]"
+                )
+                skipped += 1
                 continue
 
             # 有効な深度値
             valid = depth_img > 0
-
             if not np.any(valid):
                 self.get_logger().warning(
-                    f"スキップ（有効な深度値なし）: "
-                    f"{file_path.name}"
+                    f"スキップ（有効な深度値なし）: {file_path.name}"
                 )
+                skipped += 1
                 continue
 
             # 深度値をメートルに変換
             z = depth_img[valid].astype(np.float32) / depth_scale
 
             # ピンホールカメラモデルによる逆投影
-            x = (
-                (u[valid] - cx)
-                * z
-                / fx
-            )
+            x = (u_base[valid] - cx) * z / fx
+            y = (v_base[valid] - cy) * z / fy
 
-            y = (
-                (v[valid] - cy)
-                * z
-                / fy
-            )
+            points = np.stack((x, y, z), axis=-1).astype(np.float32)
 
-            points = np.stack(
-                (x, y, z),
-                axis=-1
-            )
-
-            # Open3D PointCloud
             pcd = o3d.geometry.PointCloud()
+            pcd.points = o3d.utility.Vector3dVector(points)
 
-            pcd.points = o3d.utility.Vector3dVector(
-                points
-            )
-
-            # PLY出力
-            output_path = (
-                output_dir / f"{file_path.stem}.ply"
-            )
+            output_path = output_dir / f"{file_path.stem}.ply"
 
             success = o3d.io.write_point_cloud(
                 str(output_path),
                 pcd,
-                write_ascii=False
+                write_ascii=write_ascii
             )
 
             if not success:
                 self.get_logger().error(
                     f"PLY書き込み失敗: {output_path}"
                 )
+                failed += 1
                 continue
+
+            converted += 1
 
             if idx % 10 == 0 or idx == total_files:
                 self.get_logger().info(
                     f"進捗: {idx}/{total_files} "
-                    f"({file_path.name} -> "
-                    f"{output_path.name})"
+                    f"(converted={converted}, skipped={skipped}, failed={failed}) "
+                    f"{file_path.name} -> {output_path.name}"
                 )
 
         self.get_logger().info(
-            "すべての変換が完了しました。"
+            "変換完了: "
+            f"total={total_files}, converted={converted}, skipped={skipped}, failed={failed}"
         )
 
 
 def main(args=None):
-
     rclpy.init(args=args)
-
     node = ConvertImage2Ply()
 
-    # 今回は__init__内で処理が完了するため
-    # spinは不要
-    node.destroy_node()
+    # timerで1回処理を実行するためspin
+    rclpy.spin_once(node, timeout_sec=0.1)
+    # 念のためイベントを少し回す
+    rclpy.spin_once(node, timeout_sec=0.1)
 
+    node.destroy_node()
     rclpy.shutdown()
 
 
