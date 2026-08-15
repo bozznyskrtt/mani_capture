@@ -14,8 +14,8 @@ class ConvertImage2Ply(Node):
         super().__init__('convert_image_ply')
 
         # ---- Parameters ----
-        self.declare_parameter('input_dir', '/home/robot/pcl_ws/teddybear/session_1786249500325777734/depth/')
-        self.declare_parameter('output_dir', '/home/robot/pcl_ws/teddybear/session_1786249500325777734/depth/ply_outputs')
+        self.declare_parameter('input_dir', './')
+        self.declare_parameter('output_dir', './ply_output')
 
         self.declare_parameter('fx', 456.701904296875)
         self.declare_parameter('fy', 456.701904296875)
