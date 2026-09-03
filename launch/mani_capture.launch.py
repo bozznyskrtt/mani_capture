@@ -210,6 +210,7 @@ def generate_launch_description():
                 package='mani_capture',
                 executable='j6_trigger_rgbd_fk.py',
                 name='mani_capture',
+                additional_env={"PYTHONPATH": new_pythonpath},
                 parameters=[{
                     'joint_name': 'J6_wrist3',
                     'threshold_deg': threshold_deg,
